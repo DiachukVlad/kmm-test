@@ -1,0 +1,5 @@
+# Project exclude paths
+/.gradle/
+/build/
+/jsApp/node_modules/
+/shared/build/
