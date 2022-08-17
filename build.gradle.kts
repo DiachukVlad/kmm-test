@@ -6,10 +6,6 @@ buildscript {
         google()
         mavenCentral()
     }
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20-Beta")
-//        classpath("com.android.tools.build:gradle:7.4.0-alpha09")
-    }
 }
 
 allprojects {

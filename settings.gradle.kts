@@ -2,13 +2,21 @@ rootProject.name = "kmm-test"
 
 pluginManagement {
     repositories {
-        google()
-        gradlePluginPortal()
+        mavenLocal()
         mavenCentral()
+        gradlePluginPortal()
+        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        google()
+    }
+
+    plugins {
+        val kotlinVersion = extra["kotlin.version"] as String
+        kotlin("multiplatform").version(kotlinVersion)
+
+        val composeVersion = extra["compose.version"] as String
+        id("org.jetbrains.compose").version(composeVersion)
     }
 }
-
-val kv = "1.7.10-Beta"
 
 //include(":androidApp")
 include(":sharedClient")
