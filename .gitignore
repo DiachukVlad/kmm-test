@@ -2,4 +2,6 @@
 /.gradle/
 /build/
 /jsApp/node_modules/
-/shared/build/
+/sharedClient/build/
+/models/build/
+/ktorServer/build/
