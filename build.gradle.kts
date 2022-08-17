@@ -1,3 +1,5 @@
+val kotlinVersion: String by project
+
 buildscript {
     repositories {
         gradlePluginPortal()
@@ -6,7 +8,7 @@ buildscript {
     }
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20-Beta")
-        classpath("com.android.tools.build:gradle:7.4.0-alpha09")
+//        classpath("com.android.tools.build:gradle:7.4.0-alpha09")
     }
 }
 
@@ -18,10 +20,10 @@ allprojects {
 }
 
 tasks.register("buildJs") {
-    dependsOn("shared:compileProductionExecutableKotlinJs")
+    dependsOn("sharedClient:compileProductionExecutableKotlinJs")
 
     doLast {
-        val from = File("$buildDir/js/packages/kmm-test-shared/kotlin")
+        val from = File("$buildDir/js/packages/kmm-test-sharedClient/kotlin")
         val into = File("$projectDir/jsApp/src/kotlin")
         if (into.exists()) into.deleteRecursively()
 

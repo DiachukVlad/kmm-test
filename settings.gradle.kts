@@ -8,5 +8,9 @@ pluginManagement {
     }
 }
 
-include(":androidApp")
-include(":shared")
+val kv = "1.7.10-Beta"
+
+//include(":androidApp")
+include(":sharedClient")
+include(":ktorServer")
+include(":models")
