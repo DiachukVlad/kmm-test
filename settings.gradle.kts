@@ -15,6 +15,8 @@ pluginManagement {
 
         val composeVersion = extra["compose.version"] as String
         id("org.jetbrains.compose").version(composeVersion)
+
+        kotlin("plugin.serialization").version(kotlinVersion)
     }
 }
 
@@ -22,3 +24,4 @@ pluginManagement {
 include(":sharedClient")
 include(":ktorServer")
 include(":models")
+include(":jsCompose")

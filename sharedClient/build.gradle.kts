@@ -5,7 +5,6 @@ buildscript {
         mavenLocal()
         mavenCentral()
         google()
-        maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     }
 }
 
@@ -19,7 +18,6 @@ repositories {
     mavenLocal()
     mavenCentral()
     gradlePluginPortal()
-    maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
     google()
 }
 
@@ -55,5 +53,5 @@ kotlin {
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    kotlinOptions.jvmTarget = "8"
+    kotlinOptions.jvmTarget = "16"
 }

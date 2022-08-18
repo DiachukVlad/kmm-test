@@ -35,11 +35,9 @@ kotlin {
             dependencies {
                 implementation(compose.web.core)
                 implementation(compose.runtime)
-            }
-        }
-        val jsTest by getting {
-            dependencies {
-                implementation(kotlin("test-js"))
+
+                implementation(project(":models"))
+                implementation(project(":sharedClient"))
             }
         }
     }

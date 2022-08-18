@@ -4,9 +4,3 @@ import io.ktor.client.plugins.contentnegotiation.*
 import kotlin.js.json
 
 expect val engine: HttpClientEngineFactory<HttpClientEngineConfig>
-
-val client = HttpClient(engine) {
-    install(ContentNegotiation) {
-        json()
-    }
-}
