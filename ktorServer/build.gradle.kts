@@ -35,6 +35,7 @@ kotlin {
                 implementation("io.ktor:ktor-server-sessions-jvm:$ktorVersion")
                 implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
                 implementation("ch.qos.logback:logback-classic:$logbackVersion")
+                implementation("io.ktor:ktor-server-cors:$ktorVersion")
 
                 implementation(project(":models"))
             }

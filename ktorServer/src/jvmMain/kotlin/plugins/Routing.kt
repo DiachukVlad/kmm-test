@@ -16,7 +16,8 @@ fun Application.configureRouting() {
             call.respond(User("Vlad", "Diachuk"))
         }
         post("/") {
-            println(call.receive<User>())
+            val user = call.receive<User>()
+            call.respond(user)
         }
     }
 }

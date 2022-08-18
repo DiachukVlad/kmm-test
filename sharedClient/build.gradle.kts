@@ -24,12 +24,15 @@ repositories {
 kotlin {
     js(IR) {
         useCommonJs()
+        moduleName = "sharedClient"
         browser{
             webpackTask {
+                outputFileName = "sharedClient.js"
                 output.libraryTarget = "commonjs2"
             }
         }
-        binaries.executable()
+
+        binaries.library()
     }
 
     sourceSets {
@@ -54,4 +57,16 @@ kotlin {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.jvmTarget = "16"
+}
+
+tasks.register("buildJs") {
+    dependsOn("jsBrowserProductionLibraryDistribution")
+
+    doLast {
+        val from = File("$buildDir/productionLibrary")
+        val into = File("$projectDir/../jsApp/src/kotlin")
+        if (into.exists()) into.deleteRecursively()
+
+        from.copyRecursively(into, true)
+    }
 }

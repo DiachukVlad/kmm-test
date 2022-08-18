@@ -12,10 +12,18 @@ fun main() {
         Div({ style { padding(25.px) } }) {
             Button(attrs = {
                 onClick {
-                    testKtor()
+                    sendTestGet()
                 }
             }) {
-                Text("test")
+                Text("Get")
+            }
+
+            Button(attrs = {
+                onClick {
+                    sendTestPost()
+                }
+            }) {
+                Text("Post")
             }
         }
     }

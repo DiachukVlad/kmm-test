@@ -4,9 +4,6 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-// const client = require("./sharedClient").sharedClient
-// console.log(client.testKtor())
-
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );

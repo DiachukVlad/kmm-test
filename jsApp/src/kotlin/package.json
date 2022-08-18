@@ -1,0 +1,11 @@
+{
+  "name": "sharedClient",
+  "version": "1.0.0-SNAPSHOT",
+  "main": "sharedClient.js",
+  "types": "sharedClient.d.ts",
+  "devDependencies": {},
+  "dependencies": {},
+  "peerDependencies": {},
+  "optionalDependencies": {},
+  "bundledDependencies": []
+}
