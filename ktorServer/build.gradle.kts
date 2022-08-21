@@ -25,19 +25,22 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
-                implementation("io.ktor:ktor-server-auth-jvm:$ktorVersion")
-                implementation("io.ktor:ktor-server-auth-jwt-jvm:$ktorVersion")
-                implementation("io.ktor:ktor-server-locations-jvm:$ktorVersion")
-                implementation("io.ktor:ktor-client-core-jvm:$ktorVersion")
-                implementation("io.ktor:ktor-client-apache-jvm:$ktorVersion")
                 implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktorVersion")
-                implementation("io.ktor:ktor-serialization-gson-jvm:$ktorVersion")
-                implementation("io.ktor:ktor-server-sessions-jvm:$ktorVersion")
                 implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
                 implementation("ch.qos.logback:logback-classic:$logbackVersion")
                 implementation("io.ktor:ktor-server-cors:$ktorVersion")
+                implementation("io.ktor:ktor-server-double-receive:$ktorVersion")
+
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
 
                 implementation(project(":models"))
+
+                // test client
+                implementation("io.ktor:ktor-client-core:$ktorVersion")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+                implementation("io.ktor:ktor-client-cio:$ktorVersion")
+
             }
         }
     }

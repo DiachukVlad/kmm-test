@@ -35,6 +35,7 @@ kotlin {
             dependencies {
                 implementation(compose.web.core)
                 implementation(compose.runtime)
+                implementation("app.softwork:routing-compose:0.2.7")
 
                 implementation(project(":models"))
                 implementation(project(":sharedClient"))
