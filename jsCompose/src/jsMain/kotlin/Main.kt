@@ -10,13 +10,15 @@ fun main() {
         HashRouter {
             route{
                 path("qwe")
-                val id by int()
-                val q by optionalInt()
+                val q by int()
+                val op by optionalInt()
+                val b by optionalBoolean()
 
                 content {
                     Div {
-                        Text("id = $id\n")
-                        Text("q = $q")
+                        Text("\nq = $q")
+                        Text("\nop = $op")
+                        Text("\nb = $b")
                     }
                 }
             }

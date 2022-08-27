@@ -1,28 +1,24 @@
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
+import kotlin.reflect.KProperty
 
 class RouteBuilder {
     var resultRegex = ""
     val names = mutableListOf<String>()
     var content: @Composable (() -> Unit)? = null
 
-    val states = HashMap<String, Pair<MutableState<Any?>, (String.() -> Any?)>>()
+    var params by mutableStateOf<Map<String, String?>>(mapOf())
 
     fun check(url: String): Boolean {
         val regex = "${resultRegex.ifEmpty { "/" }}(\\?.+)*".toRegex()
-        println("resultRegex = ${regex.pattern}")
-        println(url)
-        val match = regex.matchEntire(url) ?: return false
+        val groups = regex.matchEntire(url)?.groups ?: return false
 
-        names.forEach { name ->
-            val (state, convert) = states[name] ?: return@forEach
-
-            state.value = match.groups[name]?.value?.convert()
-        }
-
+        params = names.associateWith { groups[it]?.value }
+        println(params)
         return true
+    }
+
+    inner class ParamDelegate<T>(private val name: String, private val converter: String.() -> T?) {
+        operator fun getValue(thisRef: Any?, property: KProperty<*>) = params[name]?.converter()
     }
 }
 
@@ -32,24 +28,22 @@ fun RouteBuilder.path(path: String) {
     resultRegex += (if (!path.startsWith("/")) "/" else "") + path.removeSuffix("/")
 }
 
-fun <T> RouteBuilder.param(applyRegex: (String) -> String, converter: String.() -> T): State<T?> {
+fun <T> RouteBuilder.param(
+    converter: String.() -> T?,
+    applyRegexGroup: (String) -> String
+): RouteBuilder.ParamDelegate<T> {
     val name = "name" + names.size.toString()
     names.add(name)
-    val regex = applyRegex(name)
-    resultRegex += regex
+    resultRegex += applyRegexGroup(name)
 
-
-    val state = mutableStateOf<T?>(null)
-
-    @Suppress("UNCHECKED_CAST")
-    states[name] = (state as MutableState<Any?>) to converter
-
-    return state
+    return ParamDelegate(name, converter)
 }
 
-fun RouteBuilder.int() = param({ "/(?<$it>\\d+)" }, { toIntOrNull() })
-fun RouteBuilder.optionalInt() = param({ "(/(?<$it>\\d+)){0,}" }, { toIntOrNull() })
+fun RouteBuilder.int() = param(String::toIntOrNull) { name -> "/(?<$name>\\d+)" }
+fun RouteBuilder.boolean() = param(String::toBooleanStrictOrNull) { name -> "/(?<$name>(true|false))" }
 
+fun RouteBuilder.optionalInt() = param(String::toIntOrNull) { name -> "(/(?<$name>\\d+))*"}
+fun RouteBuilder.optionalBoolean() = param(String::toBooleanStrictOrNull) { name -> "(/(?<$name>(true|false)))*"}
 
 fun RouteBuilder.content(content: @Composable () -> Unit) {
     this.content = content
