@@ -1,30 +1,16 @@
-import androidx.compose.runtime.*
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
 
 import org.jetbrains.compose.web.renderComposable
+import routing.*
 
 fun main() {
 
     renderComposable(rootElementId = "root") {
         HashRouter {
             route{
-                path("qwe")
-                val q by int()
-                val op by optionalInt()
-                val b by optionalBoolean()
-
-                content {
-                    Div {
-                        Text("\nq = $q")
-                        Text("\nop = $op")
-                        Text("\nb = $b")
-                    }
-                }
-            }
-
-            route{
                 path("")
+                val qwe by intQueryParam()
 
                 content {
                     Div {
@@ -33,14 +19,14 @@ fun main() {
                 }
             }
 
-            route{
-                path("inna")
 
-                content {
-                    Div {
-                        Text("Hello Inna")
-                    }
-                }
+            redirect {
+                path("/red")
+                pathToRedirect = "/hoinka/"
+            }
+
+            notFound {
+                Text("NOT FOUND")
             }
         }
     }
