@@ -1,38 +1,30 @@
+import androidx.compose.runtime.Composable
+import mainpage.MainBody
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
 
 import org.jetbrains.compose.web.renderComposable
 import routing.*
+import ui.VladarTheme
 
 fun main() {
-
     renderComposable(rootElementId = "root") {
-        HashRouter {
-            route{
-                path("")
-                val qwe by intQueryParam()
-
-                content {
-                    Div {
-                        Text("Hello world")
+        VladarTheme {
+            HashRouter {
+                route {
+                    path("/")
+                    content{
+                        MainBody()
                     }
                 }
-            }
 
-
-            redirect {
-                path("/red")
-                pathToRedirect = "/hoinka/"
-            }
-
-            notFound {
-                Text("NOT FOUND")
+                notFound {
+                    Text("NOT FOUND")
+                }
             }
         }
     }
 }
-
-
 
 
 
