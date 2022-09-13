@@ -17,8 +17,6 @@ fun HashRouterContext.route(
     routes.add(Route().apply(build))
 }
 
-
-
 fun Route.content(content: @Composable () -> Unit) {
     this.content = content
 }

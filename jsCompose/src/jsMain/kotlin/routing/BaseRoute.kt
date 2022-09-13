@@ -18,7 +18,7 @@ abstract class BaseRoute {
      * true means that other routes will not be checked
      */
     @Composable
-    open fun shouldEnter(url: String): Boolean{
+    open fun shouldEnter(url: String): Boolean {
         val regex = "${resultRegex.ifEmpty { "/" }}(\\?.+)*".toRegex()
         val groups = regex.matchEntire(url)?.groups ?: return false
         params = names.associateWith { groups[it]?.value }
@@ -27,18 +27,21 @@ abstract class BaseRoute {
     }
 
     fun <T> param(
-        converter: String.() -> T?,
-        applyRegexGroup: (String) -> String
+        converter: String.() -> T,
+        optional: Boolean,
+        regex: String
     ): BaseRoute.ParamDelegate<T> {
         val name = "name" + names.size.toString()
         names.add(name)
-        resultRegex += applyRegexGroup(name)
+        val namedGroup = "/(?<$name>$regex)"
+        resultRegex += if (optional) "($namedGroup)*" else namedGroup
 
         return ParamDelegate(name, converter)
     }
 
-    inner class ParamDelegate<T>(private val name: String, private val converter: String.() -> T?) {
-        operator fun getValue(thisRef: Any?, property: KProperty<*>) = params[name]?.converter()
+    inner class ParamDelegate<T>(private val name: String, private val converter: String.() -> T) {
+        @Suppress("UNCHECKED_CAST")
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): T = params[name]?.converter() as T
     }
 }
 
@@ -48,8 +51,26 @@ fun BaseRoute.path(path: String) {
     resultRegex += path.normalizeUrl()
 }
 
-fun BaseRoute.int() = param(String::toIntOrNull) { name -> "/(?<$name>\\d+)" }
-fun BaseRoute.boolean() = param(String::toBooleanStrictOrNull) { name -> "/(?<$name>(true|false))" }
+inline fun <reified T> BaseRoute.pathParam(): BaseRoute.ParamDelegate<T> {
+    val optional: Boolean = null is T
 
-fun BaseRoute.optionalInt() = param(String::toIntOrNull) { name -> "(/(?<$name>\\d+))*"}
-fun BaseRoute.optionalBoolean() = param(String::toBooleanStrictOrNull) { name -> "(/(?<$name>(true|false)))*"}
+    return if (optional) {
+        when (T::class) {
+            Int::class -> param(String::toIntOrNull, optional, "\\d+")
+            Boolean::class -> param(String::toBooleanStrictOrNull, optional, "(true|false)")
+            String::class -> param({ decodeURIComponent(this) }, optional, "[^/]+")
+            Double::class -> param(String::toDoubleOrNull, optional, "\\d+(\\.\\d+)*")
+            Float::class -> param(String::toFloatOrNull, optional, "\\d+(\\.\\d+)*")
+            else -> null
+        } as BaseRoute.ParamDelegate<T>
+    } else {
+        when (T::class) {
+            Int::class -> param(String::toInt, optional, "\\d+")
+            Boolean::class -> param(String::toBooleanStrict, optional, "(true|false)")
+            String::class -> param({ decodeURIComponent(this) }, optional, "[^/]+")
+            Double::class -> param(String::toDouble, optional, "\\d+(\\.\\d+)*")
+            Float::class -> param(String::toFloat, optional, "\\d+(\\.\\d+)*")
+            else -> null
+        } as BaseRoute.ParamDelegate<T>
+    }
+}

@@ -20,7 +20,6 @@ class HashRouterContext {
     var url: String?
         get() = currentLocation
         set(value) {
-            println("value = ${value}")
             val normalized = value?.normalizeUrl()
             currentLocation = normalized
             window.location.hash = normalized ?: DEFAULT_ROUTE
@@ -30,16 +29,41 @@ class HashRouterContext {
 
     var queryParams: URLSearchParams by mutableStateOf(URLSearchParams(""))
 
-    inner class QueryParamsDelegate<T>(val convert: String.() -> T) {
-        operator fun getValue(thisRef: Any?, property: KProperty<*>): T? {
-            return queryParams[property.name]?.convert()
+    inner class QueryParamsDelegate<T>(val convert: (String?) -> T) {
+        operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
+            return convert(queryParams[property.name])
         }
     }
 }
 
-fun HashRouterContext.intQueryParam() = QueryParamsDelegate(String::toIntOrNull)
-fun HashRouterContext.booleanQueryParam() = QueryParamsDelegate(String::toBooleanStrictOrNull)
-fun HashRouterContext.stringQueryParam() = QueryParamsDelegate { this }
+@Suppress("UNCHECKED_CAST")
+fun <T> HashRouterContext.queryParam(
+    default: T,
+    name: String? = null
+): HashRouterContext.QueryParamsDelegate<T> {
+    return when (default) {
+        is Int -> QueryParamsDelegate { it?.toIntOrNull() ?: default }
+        is Boolean -> QueryParamsDelegate { it?.toBooleanStrictOrNull() ?: default }
+        is Double -> QueryParamsDelegate { it?.toDoubleOrNull() ?: default }
+        is Float -> QueryParamsDelegate { it?.toFloatOrNull() ?: default }
+        is String -> QueryParamsDelegate { decodeURIComponentOrNull(it) }
+        else -> throw IllegalArgumentException("Bad type query param")
+    } as HashRouterContext.QueryParamsDelegate<T>
+}
+
+@Suppress("UNCHECKED_CAST")
+inline fun <reified T> HashRouterContext.queryParam(
+    name: String? = null
+): HashRouterContext.QueryParamsDelegate<T?> {
+    return when (T::class) {
+        Int::class -> QueryParamsDelegate{it?.toIntOrNull()}
+        Boolean::class -> QueryParamsDelegate{it?.toBooleanStrictOrNull()}
+        Double::class -> QueryParamsDelegate{it?.toDoubleOrNull()}
+        Float::class -> QueryParamsDelegate{it?.toFloatOrNull()}
+        String::class -> QueryParamsDelegate { it?.let { it1 -> decodeURIComponent(it1) } }
+        else -> throw IllegalArgumentException("Bad query param type. Could be only: Int, Boolean, String, Double, Float")
+    } as HashRouterContext.QueryParamsDelegate<T?>
+}
 
 fun HashRouterContext.notFound(content: @Composable () -> Unit) {
     notFoundContent = content

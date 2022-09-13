@@ -3,25 +3,18 @@ package routing
 import androidx.compose.runtime.*
 import kotlinx.browser.window
 
-private fun String.currentURL() = removePrefix("#")
-    .removeSuffix("/")
-    .ifBlank { "/" }
-
 private val LocalRouterContext = compositionLocalOf { HashRouterContext() }
 val CurrentRouterContext: HashRouterContext @Composable get() = LocalRouterContext.current
 
 @Composable
-fun HashRouter(build: HashRouterContext.() -> Unit) {
+fun HashRouter(build: @Composable HashRouterContext.() -> Unit) {
     val path = window.location.pathname
     if (path != "/") {
         window.location.replace("/#$path")
         return
     }
 
-    val context = remember(build) {
-        HashRouterContext()
-            .apply(build)
-    }
+    val context = HashRouterContext()
 
     LaunchedEffect(Unit) {
         context.url = window.location.hash.currentURL()
@@ -32,6 +25,7 @@ fun HashRouter(build: HashRouterContext.() -> Unit) {
     }
 
     CompositionLocalProvider(LocalRouterContext provides context) {
+        context.build()
         context.url?.let { url ->
             context.routes
                 .firstOrNull { it.shouldEnter(url) }

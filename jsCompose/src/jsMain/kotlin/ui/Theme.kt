@@ -1,25 +1,22 @@
 package ui
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.compositionLocalOf
-import org.jetbrains.compose.web.css.CSSColorValue
-import org.jetbrains.compose.web.css.rgba
-
-data class VColors(
-    val mainGreen: CSSColorValue = rgba(77, 119, 78, 1),
-    val background: CSSColorValue = rgba(255, 255, 255, 1)
-)
+import androidx.compose.runtime.*
 
 class VTheme(
     val colors: VColors
 )
 
-private val localTheme = compositionLocalOf { VTheme(VColors()) }
+private val localTheme = compositionLocalOf { VTheme(lightColors) }
 val LocalTheme: VTheme @Composable get() = localTheme.current
 
 @Composable
 fun VladarTheme(content: @Composable () -> Unit) {
-    val theme = VTheme(VColors())
-    CompositionLocalProvider(localTheme provides theme, content = content)
+    val colors = if (AppState.isDarkTheme) darkColors else lightColors
+    CompositionLocalProvider(localTheme provides VTheme(colors), content = content)
+}
+
+@Composable
+fun <T> rememberTheme(instance: VTheme.() -> T): T {
+    val theme = LocalTheme
+    return remember(theme) { theme.instance() }
 }
